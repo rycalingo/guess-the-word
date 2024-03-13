@@ -9,6 +9,8 @@ const playAgainButton = document.querySelector(".play-again");
 
 const word = "magnolia";
 
+const guessedLetters = [];
+
 function updateProgress(word) {
 	const secretWord = word.split("");
 	const circle = "●";
@@ -27,5 +29,39 @@ guessButton.addEventListener("click", function (e) {
 	e.preventDefault();
 	const letter = letterInput.value;
 	letterInput.value = "";
-	console.log("Letter: ", letter);
+	message.innerHTML = "";
+
+	const playersInput = checkInput(letter);
+
+	if (playersInput) {
+		makeGuess(playersInput);
+	}
 });
+
+function checkInput(input) {
+	const acceptedLetter = /[a-zA-Z]/;
+
+	if (input.length <= 0) {
+		message.innerHTML = "No letter provided! Please enter a letter.";
+		return;
+	}
+	if (input.length > 1) {
+		message.innerHTML = "Please enter a single letter from A-Z.";
+		return;
+	}
+	if (!input.match(acceptedLetter)) {
+		message.innerHTML = "Invalid character entered. Enter a letter.";
+		return;
+	}
+	return input;
+}
+
+function makeGuess(letter) {
+	const capLetter = letter.toUpperCase();
+	console.log(capLetter);
+	if (guessedLetters.includes(capLetter)) {
+		message.innerHTML = `You've already tried letter ${capLetter}. Try again.`;
+	} else {
+		guessedLetters.push(capLetter);
+	}
+}
