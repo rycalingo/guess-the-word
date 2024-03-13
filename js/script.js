@@ -7,9 +7,25 @@ const remainingGuessesSpan = document.querySelector(".remaining span");
 const message = document.querySelector(".message");
 const playAgainButton = document.querySelector(".play-again");
 
-const word = "magnolia";
-
+let word = "magnolia";
 const guessedLetters = [];
+
+let remainingGuesses = 8;
+
+getWord();
+
+async function getWord() {
+	const response = await fetch(
+		"https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt"
+	);
+	const words = await response.text();
+	const wordArray = await words.split("\n");
+	const randomIndex = Math.floor(Math.random() * wordArray.length);
+	const randomWord = wordArray[randomIndex].trim();
+
+	word = randomWord;
+	createPlaceholders(randomWord);
+}
 
 function createPlaceholders(word) {
 	const secretWord = word.split("");
@@ -21,8 +37,6 @@ function createPlaceholders(word) {
 
 	progressDisplay.innerText = placeholder.join("");
 }
-
-createPlaceholders(word);
 
 guessButton.addEventListener("click", function (e) {
 	e.preventDefault();
@@ -63,6 +77,7 @@ function makeGuess(letter) {
 	} else {
 		guessedLetters.push(capLetter);
 		showGuessedLetters();
+		countGuesses(capLetter);
 		checkForMatches(guessedLetters);
 	}
 }
@@ -89,6 +104,24 @@ function checkForMatches(guessedLetters) {
 	}
 	progressDisplay.innerText = updateMatches.join("");
 	checkPlayerWon();
+}
+
+function countGuesses(guess) {
+	const wordUpper = word.toUpperCase();
+	if (!wordUpper.includes(guess)) {
+		remainingGuesses--;
+		message.innerHTML = `Wrong guess! Try  again.`;
+	} else {
+		message.innerHTML = `Good guess! The letter ${guess} is in the word.`;
+	}
+	if (remainingGuesses === 0) {
+		message.innerHTML = `Game Over! The secrect word is ${wordUpper}.`;
+	}
+	if (remainingGuesses <= 1) {
+		remainingGuessesSpan.innerHTML = `${remainingGuesses} guess`;
+	} else {
+		remainingGuessesSpan.innerHTML = `${remainingGuesses} guesses`;
+	}
 }
 
 function checkPlayerWon() {
