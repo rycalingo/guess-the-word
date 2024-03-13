@@ -11,19 +11,18 @@ const word = "magnolia";
 
 const guessedLetters = [];
 
-function updateProgress(word) {
+function createPlaceholders(word) {
 	const secretWord = word.split("");
-	const circle = "●";
 	const placeholder = [];
 
-	secretWord.forEach(function (char, i) {
-		placeholder.push(circle);
-	});
+	for (let letter of secretWord) {
+		placeholder.push("●");
+	}
 
-	progressDisplay.innerHTML = placeholder.join("");
+	progressDisplay.innerText = placeholder.join("");
 }
 
-updateProgress(word);
+createPlaceholders(word);
 
 guessButton.addEventListener("click", function (e) {
 	e.preventDefault();
@@ -63,5 +62,38 @@ function makeGuess(letter) {
 		message.innerHTML = `You've already tried letter ${capLetter}. Try again.`;
 	} else {
 		guessedLetters.push(capLetter);
+		showGuessedLetters();
+		checkForMatches(guessedLetters);
+	}
+}
+
+function showGuessedLetters() {
+	gussedDisplay.innerHTML = "";
+	const newList = guessedLetters.map(function (item) {
+		return `<li>${item}</li>`;
+	});
+	gussedDisplay.innerHTML = newList.join("");
+}
+
+function checkForMatches(guessedLetters) {
+	const wordUpper = word.toUpperCase();
+	const wordArray = wordUpper.split("");
+	const updateMatches = [];
+
+	for (let char of wordArray) {
+		if (guessedLetters.includes(char)) {
+			updateMatches.push(char);
+		} else {
+			updateMatches.push("●");
+		}
+	}
+	progressDisplay.innerText = updateMatches.join("");
+	checkPlayerWon();
+}
+
+function checkPlayerWon() {
+	if (word.toUpperCase() === progressDisplay.innerText) {
+		message.classList.add("win");
+		message.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
 	}
 }
