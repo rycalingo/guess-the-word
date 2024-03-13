@@ -22,3 +22,10 @@ function updateProgress(word) {
 }
 
 updateProgress(word);
+
+guessButton.addEventListener("click", function (e) {
+	e.preventDefault();
+	const letter = letterInput.value;
+	letterInput.value = "";
+	console.log("Letter: ", letter);
+});
